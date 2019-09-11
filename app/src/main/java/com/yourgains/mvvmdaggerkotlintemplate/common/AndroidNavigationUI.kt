@@ -17,8 +17,12 @@ object AndroidNavigationUI {
         listener: NavigationView.OnNavigationItemSelectedListener? = null
     ) {
         navigationView.setNavigationItemSelectedListener { item ->
-            val handled = if (listener?.onNavigationItemSelected(item) == true) false
-            else NavigationUI.onNavDestinationSelected(item, navController)
+            navController.currentDestination?.let {
+                navController.popBackStack(it.id, true)
+            }
+            val handled = listener?.onNavigationItemSelected(item)?.takeIf { it }
+                ?: NavigationUI.onNavDestinationSelected(item, navController)
+
             if (handled) {
                 val parent = navigationView.parent
                 if (parent is DrawerLayout) {
@@ -41,15 +45,10 @@ object AndroidNavigationUI {
                     navController.removeOnDestinationChangedListener(this)
                 } else {
                     val menu = view.menu
-                    var h = 0
-
-                    val size = menu.size()
-                    while (h < size) {
-                        val item = menu.getItem(h)
+                    for (i in 0 until menu.size()) {
+                        val item = menu.getItem(i)
                         item.isChecked = matchDestination(destination, item.itemId)
-                        ++h
                     }
-
                 }
             }
         })
@@ -57,9 +56,9 @@ object AndroidNavigationUI {
 
     internal fun matchDestination(destination: NavDestination, @IdRes destId: Int): Boolean {
         var currentDestination: NavDestination? = destination
-        while (currentDestination!!.id != destId && currentDestination.parent != null) {
-            currentDestination = currentDestination.parent
+        if (currentDestination?.id != destId) {
+            currentDestination = currentDestination?.parent
         }
-        return currentDestination.id == destId
+        return currentDestination?.id == destId
     }
 }

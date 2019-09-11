@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.LayoutRes
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
 import com.yourgains.mvvmdaggerkotlintemplate.R
-import com.yourgains.mvvmdaggerkotlintemplate.di.factory.ViewModelFactory
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-abstract class BaseFragment : DaggerFragment(){
+abstract class BaseFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -22,17 +22,20 @@ abstract class BaseFragment : DaggerFragment(){
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(getLayoutId(), container, false)
-    }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = inflater.inflate(getLayoutId(), container, false)
 
     @LayoutRes
     abstract fun getLayoutId(): Int
 
-    private fun getBaseActivity(): BaseActivity? = if (activity is BaseActivity) activity as BaseActivity else null
+    private fun getBaseActivity(): BaseActivity? =
+        if (activity is BaseActivity) activity as BaseActivity else null
 
     protected fun notImplementedToast() {
-        activity?.let { Toast.makeText(it, R.string.not_implemented, Toast.LENGTH_SHORT).show()}
+        activity?.let { Toast.makeText(it, R.string.not_implemented, Toast.LENGTH_SHORT).show() }
     }
 
     fun navigate(id: Int, bundle: Bundle? = null) {
@@ -47,5 +50,33 @@ abstract class BaseFragment : DaggerFragment(){
 
     fun navigateUp() {
         getBaseActivity()?.getNavController()?.navigateUp()
+    }
+
+    fun showErrorToast(error: String) {
+        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+    }
+
+    protected fun showAppBar() {
+        getBaseActivity()?.showAppBar()
+    }
+
+    protected fun hideAppBar() {
+        getBaseActivity()?.hideAppBar()
+    }
+
+    protected fun setAppBarTitle(@StringRes titleResId: Int) {
+        getBaseActivity()?.setAppBarTitle(titleResId)
+    }
+
+    protected fun setAppBarTitle(title: String) {
+        getBaseActivity()?.setAppBarTitle(title)
+    }
+
+    protected fun lockDrawerLayout() {
+        getBaseActivity()?.lockDrawerLayout()
+    }
+
+    protected fun unlockDrawerLayout() {
+        getBaseActivity()?.unlockDrawerLayout()
     }
 }
