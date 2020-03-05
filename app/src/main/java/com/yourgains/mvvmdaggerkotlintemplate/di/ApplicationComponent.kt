@@ -3,7 +3,7 @@ package com.yourgains.mvvmdaggerkotlintemplate.di
 import android.app.Application
 import android.content.Context
 import com.yourgains.mvvmdaggerkotlintemplate.App
-import com.yourgains.mvvmdaggerkotlintemplate.di.modules.*
+import com.yourgains.mvvmdaggerkotlintemplate.di.module.*
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector

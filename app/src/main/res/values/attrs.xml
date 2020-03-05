@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="RoundedImageView">
+    <declare-styleable name="ErrorTextInputLayout">
+        <attr name="error_background" format="reference" />
+        <attr name="error_drawable_start" format="reference" />
+    </declare-styleable>
 
+    <declare-styleable name="RoundedImageView">
         <attr name="corner_radius" format="float" />
         <attr name="make_circle" format="boolean" />
-
     </declare-styleable>
 
 </resources>

@@ -6,5 +6,5 @@ package com.yourgains.mvvmdaggerkotlintemplate.common
  */
 class Navigate {
 
-    enum class Global { SecondPage, Close }
+    enum class Global { SecondPage, Close, Back }
 }

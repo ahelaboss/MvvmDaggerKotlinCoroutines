@@ -4,8 +4,8 @@ import androidx.lifecycle.Observer
 import com.yourgains.mvvmdaggerkotlintemplate.common.Navigate
 import com.yourgains.mvvmdaggerkotlintemplate.common.SingleLiveData
 import com.yourgains.mvvmdaggerkotlintemplate.data.entity.presentation.ItemUIModel
-import com.yourgains.mvvmdaggerkotlintemplate.domain.usercase.items.GetItemsUseCase
-import com.yourgains.mvvmdaggerkotlintemplate.domain.usercase.items.ObserveItemsUseCase
+import com.yourgains.mvvmdaggerkotlintemplate.domain.usercase.item.GetItemsUseCase
+import com.yourgains.mvvmdaggerkotlintemplate.domain.usercase.item.ObserveItemsUseCase
 import com.yourgains.mvvmdaggerkotlintemplate.presentation.viewmodel.BaseViewModel
 import timber.log.Timber
 import javax.inject.Inject
@@ -31,7 +31,7 @@ class FirstViewModel @Inject constructor(
                 itemsLiveData.value = it
             }
 
-            onNetworkError { Timber.e(it) }
+            onNetworkError { Timber.e(it.toString()) }
             onError { Timber.e(it) }
         }
 

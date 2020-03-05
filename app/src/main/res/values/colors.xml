@@ -3,4 +3,33 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="status_bar">#26202334</color>
+    <color name="navigation_bar">#090C0F</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="white20">#26FFFFFF</color>
+    <color name="white30">#4DFFFFFF</color>
+    <color name="white40">#66FFFFFF</color>
+    <color name="white65">#A6FFFFFF</color>
+    <color name="black50">#80020202</color>
+    <color name="black20">#26020202</color>
+
+    <color name="sky_blue">#FF86BCE8</color>
+    <color name="ucla_blue">#FF4F55A1</color>
+    <color name="blue_gray">#FF5794C6</color>
+    <color name="saint_patrick_blue">#FF333872</color>
+    <color name="dark_gray">#FFA5A7AC</color>
+    <color name="davy_grey">#FF40536D</color>
+    <color name="trolley_grey">#FF787C83</color>
+    <color name="medium_jungle_green">#882B2F3D</color>
+    <color name="dark_jungle_green">#FF1E2632</color>
+    <color name="charcoal">#FF323F52</color>
+    <color name="outer_space">#FF404650</color>
+    <color name="transparent">#00000000</color>
+    <color name="black">#FF020202</color>
+    <color name="wild_blue_yonder">#FFA8AEC4</color>
+    <color name="manatee">#FF979797</color>
+    <color name="vivid_auburn">#FF9B2023</color>
+    <color name="glaucous">#FF5867AD</color>
+    <color name="isabelline">#eeeef0</color>
 </resources>

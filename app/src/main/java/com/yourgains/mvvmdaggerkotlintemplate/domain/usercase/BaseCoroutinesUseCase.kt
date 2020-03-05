@@ -1,11 +1,14 @@
 package com.yourgains.mvvmdaggerkotlintemplate.domain.usercase
 
-import com.google.gson.Gson
-import com.yourgains.mvvmdaggerkotlintemplate.data.entity.network.ErrorResponse
 import com.yourgains.mvvmdaggerkotlintemplate.data.entity.presentation.NetworkErrorUiModel
-import com.yourgains.mvvmdaggerkotlintemplate.domain.usercase.blocks.CompletionBlock
+import com.yourgains.mvvmdaggerkotlintemplate.domain.repository.INetworkStateRepository
+import com.yourgains.mvvmdaggerkotlintemplate.domain.usercase.block.CompletionBlock
 import kotlinx.coroutines.*
 import retrofit2.HttpException
+import timber.log.Timber
+import java.net.ConnectException
+import java.net.UnknownHostException
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -15,9 +18,31 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class BaseCoroutinesUseCase<T> {
 
+    @Inject
+    lateinit var networkStateRepository: INetworkStateRepository
+
     private var parentJob: Job = Job()
-    var backgroundContext: CoroutineContext = Dispatchers.IO
-    var foregroundContext: CoroutineContext = Dispatchers.Main
+    private var backgroundContext: CoroutineContext = Dispatchers.IO
+    private var foregroundContext: CoroutineContext = Dispatchers.Main
+
+    protected var userId: String? = null
+    private var delay: Long = 0L
+
+    fun setDelay(delay: Long) {
+        this.delay = delay
+    }
+
+    protected open suspend fun executeOnBackgroundPre() {
+        //do nothing
+    }
+
+    protected open fun executePreBackground() {
+        //do nothing
+    }
+
+    protected open fun executePostBackground() {
+        //do nothing
+    }
 
     protected abstract suspend fun executeOnBackground(): T
 
@@ -25,27 +50,38 @@ abstract class BaseCoroutinesUseCase<T> {
         val response = Request<T>().apply { block() }
         unsubscribe()
         parentJob = Job()
-        CoroutineScope(foregroundContext + parentJob).launch {
-            try {
-                val result = withContext(backgroundContext) {
-                    executeOnBackground()
-                }
-                response(result)
-            } catch (ex: CancellationException) {
-                response(ex)
-            } catch (ex: HttpException) {
-                val responseBody = ex.response().errorBody()
-                val error = if (responseBody?.contentType()?.subtype() == "json") {
-                    val errorResponse =
-                        Gson().fromJson(responseBody.string(), ErrorResponse::class.java)
-                    NetworkErrorUiModel(ex.code(), errorResponse.message)
-                } else {
-                    NetworkErrorUiModel(ex.code(), ex.message())
-                }
-                response(error)
-            } catch (ex: Exception) {
-                response(ex)
+        CoroutineScope(foregroundContext + parentJob).launch { launchScope(response) }
+    }
+
+    private suspend fun launchScope(response: Request<T>, isRetry: Boolean = true) {
+        if (delay > 0) delay(delay)
+        executePreBackground()
+        try {
+            val result = withContext(backgroundContext) {
+                executeOnBackgroundPre()
+                executeOnBackground()
             }
+            response(result)
+        } catch (ex: CancellationException) {
+            Timber.d(ex)
+            response(ex)
+        } catch (ex: ConnectException) {
+            Timber.e(ex)
+            networkStateRepository.showNetworkConnectionErrorDialog()
+            response(NetworkErrorUiModel(0, ex.message))
+        } catch (ex: UnknownHostException) {
+            Timber.e(ex)
+            networkStateRepository.showNetworkConnectionErrorDialog()
+            response(NetworkErrorUiModel(0, ex.message))
+        } catch (ex: HttpException) {
+            val error = getError(ex)
+            Timber.e(error.toString())
+            response(error)
+        } catch (ex: Exception) {
+            Timber.e(ex)
+            response(ex)
+        } finally {
+            executePostBackground()
         }
     }
 
@@ -55,6 +91,9 @@ abstract class BaseCoroutinesUseCase<T> {
             cancel()
         }
     }
+
+    private fun getError(ex: HttpException): NetworkErrorUiModel =
+        NetworkErrorUiModel(ex.code(), ex.message())
 
     class Request<T> {
         private var onComplete: ((T) -> Unit)? = null
