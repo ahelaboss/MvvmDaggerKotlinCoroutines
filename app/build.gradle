@@ -13,22 +13,30 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        setProperty("archivesBaseName", "cecil_horse-v" + versionName + "(" + versionCode + ")")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            versionNameSuffix "-debug"
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            versionNameSuffix "-release"
         }
     }
     flavorDimensions "default"
     productFlavors {
         prod {
+            versionNameSuffix "_prod"
             dimension "default"
             buildConfigField("String", "BASE_URL", '"http://apps.yourgains.com"')
         }
 
         dev {
+            applicationIdSuffix ".dev"
+            versionNameSuffix "_dev"
             dimension "default"
             buildConfigField("String", "BASE_URL", '"http://apps.yourgains.com"')
         }
