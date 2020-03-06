@@ -13,7 +13,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        setProperty("archivesBaseName", "cecil_horse-v" + versionName + "(" + versionCode + ")")
+        setProperty("archivesBaseName", "app_name-v" + versionName + "(" + versionCode + ")")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
